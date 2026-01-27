@@ -333,40 +333,158 @@ clawdbot init
 
 ---
 
-### 방법 B: Claude Max/Pro 구독자
+### 방법 B: Claude Max/Pro 구독자 (상세 가이드)
 
-#### Clawdbot 초기화 (OAuth 모드)
+> 앞서 `claude login`으로 로그인을 완료했다면, 이제 Clawdbot이 그 로그인을 사용하도록 설정합니다.
+
+---
+
+#### B-8. Clawdbot 초기화
+
+**터미널에서 작업 폴더로 이동 후 실행:**
 
 ```bash
 clawdbot init
 ```
 
-설정 마법사에서:
+---
 
-1. **API Key 입력 부분에서**
-   - 빈칸으로 두고 엔터 (또는 `skip` 입력)
-   
-2. **또는 직접 설정 파일 수정:**
+#### B-9. 설정 마법사 진행
 
+설정 마법사가 시작됩니다. 아래와 같이 입력하세요:
+
+**질문 1: "Enter your Anthropic API key"**
+```
+API key를 입력하라고 나오면:
+→ 그냥 엔터를 누르세요 (빈칸으로 스킵)
+```
+
+**질문 2: "Select default model"**
+```
+모델 선택 화면이 나오면:
+→ claude-sonnet-4-20250514 선택 (권장)
+→ 또는 Max 구독자는 claude-opus-4-20250514 선택 가능
+```
+
+**질문 3: "Working directory"**
+```
+작업 디렉토리 설정:
+→ 기본값 그대로 엔터
+```
+
+---
+
+#### B-10. OAuth 설정 활성화 (중요! ⭐)
+
+Clawdbot이 Claude Code 로그인을 사용하도록 설정 파일을 수정합니다.
+
+**설정 파일 열기:**
 ```bash
 clawdbot config edit
 ```
 
-설정 파일에서 아래와 같이 수정:
+텍스트 에디터가 열립니다.
 
+---
+
+#### B-11. 설정 파일 수정
+
+설정 파일에서 아래 내용을 찾아 수정하세요:
+
+**수정 전 (API 키 방식):**
 ```yaml
-# API 키 대신 OAuth 사용
 anthropic:
-  # apiKey: "sk-ant-..."  ← 이 줄 삭제 또는 주석처리
-  oauth: true              # ← 이 줄 추가!
-
-# 모델 설정
-model: claude-sonnet-4-20250514
+  apiKey: "sk-ant-api03-..."
 ```
 
-⚠️ **Max 구독자 참고:** 
-- Max 플랜은 Opus 모델 포함! `claude-opus-4-20250514` 사용 가능
-- Pro 플랜은 Sonnet까지만 가능
+**수정 후 (OAuth 방식):**
+```yaml
+anthropic:
+  oauth: true
+```
+
+⚠️ **주의사항:**
+- `apiKey:` 줄이 있으면 **삭제**하거나 앞에 `#`을 붙여 주석처리
+- `oauth: true`를 추가
+- 들여쓰기 주의! `oauth:`는 `anthropic:` 아래에 **스페이스 2칸** 들여쓰기
+
+**전체 설정 예시:**
+```yaml
+anthropic:
+  oauth: true
+
+model: claude-sonnet-4-20250514
+
+workspace: /Users/사용자명/clawd
+
+channels:
+  # 텔레그램, 슬랙 설정은 나중에 추가
+```
+
+---
+
+#### B-12. 파일 저장 후 닫기
+
+- **Windows:** `Ctrl + S` → 창 닫기
+- **macOS:** `Cmd + S` → 창 닫기
+
+---
+
+#### B-13. Clawdbot 시작 및 테스트
+
+**게이트웨이 시작:**
+```bash
+clawdbot gateway start
+```
+
+**상태 확인:**
+```bash
+clawdbot status
+```
+
+정상이면 이런 메시지가 나옵니다:
+```
+✓ Gateway running
+✓ Claude API: connected (oauth)
+```
+
+**웹 채팅으로 테스트:**
+```bash
+clawdbot chat
+```
+
+브라우저가 열리고 채팅창이 나타납니다. 메시지를 보내보세요!
+
+---
+
+#### B-14. OAuth 연결 문제 해결
+
+**❌ "Authentication failed" 에러**
+1. `claude login` 다시 실행해서 로그인 갱신
+2. `clawdbot gateway restart` 실행
+
+**❌ "oauth: true" 설정했는데 API 키 묻는 경우**
+1. 설정 파일에서 `apiKey:` 줄이 남아있는지 확인
+2. 있으면 삭제하고 저장
+3. `clawdbot gateway restart` 실행
+
+**❌ "Rate limit exceeded" 에러**
+- Pro/Max 구독의 사용량 한도 초과
+- 잠시 후 다시 시도하거나, claude.ai에서 사용량 확인
+
+---
+
+⚠️ **모델 사용 가능 여부:**
+
+| 구독 플랜 | 사용 가능 모델 |
+|-----------|----------------|
+| Pro ($20/월) | Sonnet만 가능 |
+| Max ($100/월) | Sonnet + **Opus** 가능 ⭐ |
+
+**Opus 사용하려면 (Max 구독자만):**
+```yaml
+model: claude-opus-4-20250514
+```
 
 ---
 
