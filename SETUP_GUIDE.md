@@ -169,50 +169,129 @@ API 키가 있어도 결제 수단이 없으면 작동하지 않습니다.
 
 ---
 
-### 방법 B: Claude Max/Pro 로그인 (구독자 전용) ⭐
+### 방법 B: Claude Code CLI 로그인 (구독자 전용) ⭐ 상세 가이드
 
 > 💡 Claude Pro ($20/월) 또는 Claude Max ($100/월) 구독자는 API 키 없이 로그인만으로 사용 가능!
+> 
+> 🎯 **장점:** API 비용 걱정 없이 구독료에 포함된 사용량으로 Clawdbot 사용!
 
-#### B-1. Claude Code 설치 확인
+---
 
-Clawdbot 설치 시 Claude Code가 함께 설치됩니다. 확인:
+#### B-1. Claude Code CLI 설치
 
-```bash
-claude --version
-```
+Clawdbot과 별개로 Claude Code CLI를 설치해야 합니다.
 
-버전이 나오면 OK! 안 나오면:
+**터미널(macOS) 또는 PowerShell(Windows)에서 실행:**
 
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-#### B-2. Claude 로그인
+설치 완료 메시지 예시:
+```
+added 1 package in 3s
+```
 
-터미널에서 아래 명령어 실행:
+#### B-2. 설치 확인
+
+```bash
+claude --version
+```
+
+버전 번호가 나오면 성공! (예: `1.0.17`)
+
+❌ **에러가 나면?**
+- `command not found`: 터미널을 껐다가 다시 열고 재시도
+- 그래도 안 되면: `npm install -g @anthropic-ai/claude-code` 다시 실행
+
+---
+
+#### B-3. Claude 계정 로그인
+
+**터미널에서 아래 명령어 실행:**
 
 ```bash
 claude login
 ```
 
-#### B-3. 브라우저 인증
+실행하면 이런 메시지가 나옵니다:
+```
+Opening browser to log in...
 
-1. 명령어 실행 후 브라우저가 자동으로 열립니다
-2. Claude 계정으로 로그인 (Pro/Max 구독 중인 계정)
-3. **"허용"** 또는 **"Authorize"** 클릭
-4. "인증 완료" 메시지가 나오면 브라우저 닫기
-
-#### B-4. 로그인 확인
-
-터미널에서 아래 명령어로 확인:
-
-```bash
-claude config list
+Waiting for authentication...
 ```
 
-`oauth` 또는 계정 정보가 보이면 성공!
+---
 
-✅ 이제 로그인 완료! → [5. Clawdbot 초기 설정 - 방법 B](#방법-b-claude-maxpro-구독자) 로 이동
+#### B-4. 브라우저에서 로그인 승인
+
+1. **브라우저가 자동으로 열립니다**
+   - 안 열리면 터미널에 표시된 URL을 직접 복사해서 브라우저에 붙여넣기
+
+2. **Claude 계정으로 로그인**
+   - 이미 로그인되어 있으면 바로 승인 화면으로 이동
+   - ⚠️ **반드시 Pro 또는 Max 구독 중인 계정으로 로그인!**
+
+3. **권한 승인 화면**
+   - "Claude Code wants to access your account" 메시지 확인
+   - **"Allow"** 또는 **"허용"** 버튼 클릭
+
+4. **승인 완료 화면**
+   - "You can now close this window" 메시지가 나오면 성공!
+   - 브라우저 탭 닫기
+
+---
+
+#### B-5. 터미널에서 로그인 완료 확인
+
+브라우저에서 승인하면 터미널에 이런 메시지가 나옵니다:
+
+```
+✓ Successfully logged in!
+
+Your account: your-email@example.com
+Plan: Claude Max (또는 Pro)
+```
+
+---
+
+#### B-6. 로그인 상태 확인 (선택사항)
+
+언제든지 로그인 상태를 확인하려면:
+
+```bash
+claude whoami
+```
+
+출력 예시:
+```
+Logged in as: your-email@example.com
+Plan: max
+```
+
+---
+
+#### B-7. 문제 해결
+
+**❌ "You don't have an active subscription" 오류**
+- Claude Pro 또는 Max 구독이 필요합니다
+- https://claude.ai/settings 에서 구독 상태 확인
+- 구독이 없으면 → [방법 A: API 키](#방법-a-api-키-발급-종량제) 사용
+
+**❌ 브라우저가 안 열림**
+- 터미널에 표시된 URL을 복사해서 브라우저에 직접 붙여넣기
+- URL 형태: `https://claude.ai/oauth/authorize?...`
+
+**❌ "Already logged in" 메시지**
+- 이미 로그인되어 있음! 그냥 진행하면 됨
+- 다른 계정으로 바꾸려면: `claude logout` 후 다시 `claude login`
+
+**❌ 로그인 후에도 API 에러 발생**
+- Clawdbot 설정에서 OAuth 모드 확인 필요 (아래 5번 섹션 참고)
+
+---
+
+✅ **로그인 완료!** → [5. Clawdbot 초기 설정 - 방법 B](#방법-b-claude-maxpro-구독자) 로 이동
 
 ---
 
