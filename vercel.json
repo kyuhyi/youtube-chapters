@@ -1,7 +1,8 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "api/*.py",
+      "src": "api/transcript.py",
       "use": "@vercel/python"
     },
     {
@@ -10,7 +11,7 @@
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/api/transcript", "dest": "/api/transcript.py" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
