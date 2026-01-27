@@ -1167,26 +1167,112 @@ clawdbot pairing approve slack XYZ98ABC
 
 ---
 
-## 8. 브라우저 확장 프로그램 설치
+## 8. 브라우저 확장 프로그램 설치 (상세 가이드)
 
 Clawdbot이 브라우저를 제어할 수 있게 해주는 확장 프로그램입니다.
 
-### Chrome 확장 프로그램 설치
+> 💡 Clawdbot 설치 시 확장 프로그램이 **로컬에 자동 생성**됩니다. 이걸 Chrome에 직접 로드합니다.
 
-1. **Chrome 웹 스토어 접속**
-   - https://chromewebstore.google.com 접속
+---
 
-2. **Clawdbot 검색**
-   - 검색창에 "Clawdbot" 입력
-   - 또는 직접 링크: https://chromewebstore.google.com/detail/clawdbot-browser-relay/dgpmpijclocjgjbbejikaoofopnphaga
+### STEP 1: 확장 프로그램 경로 확인
 
-3. **확장 프로그램 추가**
-   - **"Chrome에 추가"** 클릭
-   - **"확장 프로그램 추가"** 확인
+Clawdbot 설치 시 아래 경로에 Chrome 확장 프로그램이 생성됩니다:
 
-4. **확장 프로그램 고정**
-   - 주소창 옆 퍼즐 아이콘 클릭
-   - Clawdbot 옆 핀 아이콘 클릭
+**macOS:**
+```
+~/.clawdbot/browser/chrome-extension/
+```
+또는 전체 경로:
+```
+/Users/사용자명/.clawdbot/browser/chrome-extension/
+```
+
+**Windows:**
+```
+C:\Users\사용자명\.clawdbot\browser\chrome-extension\
+```
+
+---
+
+### STEP 2: Chrome 확장 프로그램 관리 페이지 열기
+
+1. **Chrome 브라우저 실행**
+
+2. **주소창에 아래 입력 후 엔터:**
+   ```
+   chrome://extensions
+   ```
+
+3. **확장 프로그램 관리 페이지**가 열립니다
+
+---
+
+### STEP 3: 개발자 모드 켜기
+
+1. 화면 **우측 상단**에 **"개발자 모드"** 토글 찾기
+2. 토글을 **ON** 으로 변경
+3. 새로운 버튼들이 나타납니다:
+   - "압축해제된 확장 프로그램을 로드합니다"
+   - "확장 프로그램 압축"
+   - "업데이트"
+
+---
+
+### STEP 4: 확장 프로그램 로드
+
+1. **"압축해제된 확장 프로그램을 로드합니다"** 버튼 클릭
+
+2. **폴더 선택 창**이 열립니다
+
+3. **확장 프로그램 경로로 이동:**
+
+   **macOS에서 숨김 폴더 보기:**
+   - 폴더 선택 창에서 `Cmd + Shift + .` (마침표) 누르기
+   - 숨김 폴더(`.`으로 시작하는 폴더)가 보임
+   - `.clawdbot` → `browser` → `chrome-extension` 선택
+   
+   **또는 직접 경로 입력:**
+   - `Cmd + Shift + G` 누르기
+   - 경로 입력: `~/.clawdbot/browser/chrome-extension`
+   - "이동" 클릭
+
+   **Windows:**
+   - 경로에 `%USERPROFILE%\.clawdbot\browser\chrome-extension` 입력
+   - 또는 `C:\Users\사용자명\.clawdbot\browser\chrome-extension` 직접 이동
+
+4. **"선택"** 또는 **"폴더 선택"** 클릭
+
+---
+
+### STEP 5: 설치 확인
+
+1. 확장 프로그램 목록에 **"Clawdbot Browser Relay"** 가 나타남
+2. 토글이 **ON** (파란색) 상태인지 확인
+
+---
+
+### STEP 6: 확장 프로그램 고정 (선택사항)
+
+1. Chrome 주소창 옆 **퍼즐 아이콘** 🧩 클릭
+2. "Clawdbot Browser Relay" 옆 **핀 아이콘** 📌 클릭
+3. 주소창 옆에 Clawdbot 아이콘이 고정됨
+
+---
+
+### 문제 해결
+
+**❌ ".clawdbot 폴더가 안 보여요"**
+- macOS: `Cmd + Shift + .` 로 숨김 폴더 표시
+- Windows: 파일 탐색기 → 보기 → 숨긴 항목 체크
+
+**❌ "chrome-extension 폴더가 없어요"**
+- Clawdbot이 제대로 설치되지 않았을 수 있음
+- `npm install -g clawdbot` 다시 실행
+
+**❌ "매니페스트 파일을 로드할 수 없습니다" 오류**
+- 폴더를 잘못 선택했을 수 있음
+- `chrome-extension` 폴더 안에 `manifest.json` 파일이 있는지 확인
 
 ---
 
