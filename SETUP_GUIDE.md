@@ -181,191 +181,575 @@ clawdbot init
 
 ---
 
-## 6. 텔레그램 연동
+## 6. 텔레그램 연동 (상세 가이드)
 
-### 6-1. 텔레그램 봇 생성
+> ⏱️ 예상 소요시간: 5분
 
-1. **텔레그램 앱에서 BotFather 검색**
-   - 텔레그램 앱 열기
-   - 검색창에 `@BotFather` 입력
-   - 파란 체크마크 있는 공식 계정 선택
+텔레그램은 설정이 가장 간단합니다. 봇 토큰과 내 Chat ID만 있으면 됩니다.
 
-2. **새 봇 생성**
-   - `/newbot` 입력
-   - 봇 이름 입력 (예: "나의 AI 비서")
-   - 봇 username 입력 (예: `my_ai_assistant_bot`)
-     - ⚠️ 반드시 `_bot`으로 끝나야 함!
+---
 
-3. **토큰 저장**
-   - BotFather가 보내주는 토큰 복사
-   - 형태: `1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`
+### 📱 STEP 1: 텔레그램 앱 준비
 
-### 6-2. 내 텔레그램 Chat ID 확인
+**핸드폰 또는 PC에서 텔레그램 앱을 엽니다.**
 
-1. **@userinfobot 검색**
-   - 텔레그램에서 `@userinfobot` 검색
-   - 대화 시작
+- 텔레그램이 없다면: https://telegram.org 에서 다운로드
+- 계정이 없다면: 전화번호로 회원가입
 
-2. **Chat ID 확인**
-   - 아무 메시지나 보내면 내 정보 표시
-   - `Id: 123456789` ← 이 숫자가 Chat ID
+---
 
-### 6-3. Clawdbot에 텔레그램 설정
+### 🤖 STEP 2: BotFather에서 봇 생성하기
+
+BotFather는 텔레그램의 공식 봇 생성 도구입니다.
+
+#### 2-1. BotFather 찾기
+
+1. 텔레그램 상단의 **검색창** (돋보기 아이콘) 클릭
+2. `@BotFather` 입력
+3. 검색 결과에서 **파란색 체크마크 ✓** 가 있는 계정 선택
+   - ⚠️ 가짜 계정 주의! 반드시 파란 체크 확인!
+
+#### 2-2. BotFather와 대화 시작
+
+1. BotFather 채팅방에 들어가면 **"시작"** 또는 **"Start"** 버튼 클릭
+2. BotFather가 명령어 목록을 보여줍니다
+
+#### 2-3. 새 봇 생성
+
+1. 채팅창에 아래 명령어 입력 후 전송:
+   ```
+   /newbot
+   ```
+
+2. BotFather가 물어봅니다: **"Alright, a new bot. How are we going to call it? Please choose a name for your bot."**
+   
+   → 봇의 **표시 이름** 입력 (한글 가능)
+   ```
+   나의 AI 비서
+   ```
+
+3. BotFather가 다시 물어봅니다: **"Good. Now let's choose a username for your bot..."**
+   
+   → 봇의 **고유 아이디** 입력
+   ```
+   my_clawdbot_12345_bot
+   ```
+   
+   ⚠️ **중요한 규칙:**
+   - 반드시 `bot` 또는 `_bot`으로 끝나야 함
+   - 영문, 숫자, 밑줄(_)만 사용 가능
+   - 이미 존재하는 이름이면 다른 이름 사용
+
+#### 2-4. 봇 토큰 저장 ⭐ (매우 중요!)
+
+봇 생성이 완료되면 BotFather가 이런 메시지를 보냅니다:
+
+```
+Done! Congratulations on your new bot. You will find it at t.me/my_clawdbot_12345_bot.
+
+Use this token to access the HTTP API:
+7123456789:AAHxxx_YOUR_BOT_TOKEN_HERE_xxxxx
+
+Keep your token secure and store it safely...
+```
+
+**`7123456789:AAHxxx...` 형태의 토큰을 복사해서 메모장에 저장하세요!**
+
+이 토큰은 다시 볼 수 없으니 반드시 저장!
+
+---
+
+### 🔍 STEP 3: 내 Chat ID 확인하기
+
+Clawdbot이 나에게만 응답하도록 하려면 내 Chat ID가 필요합니다.
+
+#### 3-1. userinfobot 찾기
+
+1. 텔레그램 검색창에서 `@userinfobot` 검색
+2. **"User Info Bot"** 선택 (로봇 아이콘)
+
+#### 3-2. Chat ID 확인
+
+1. userinfobot 채팅방에서 **"시작"** 클릭
+2. 아무 메시지나 보내기 (예: "안녕")
+3. 봇이 내 정보를 보여줍니다:
+
+```
+@사용자이름
+Id: 123456789      ← 이 숫자가 내 Chat ID!
+First: 이름
+Lang: ko
+```
+
+**`Id:` 뒤의 숫자를 복사해서 메모장에 저장하세요!**
+
+---
+
+### ⚙️ STEP 4: Clawdbot 설정 파일 수정
+
+이제 Clawdbot에 텔레그램 정보를 입력합니다.
+
+#### 4-1. 설정 파일 열기
+
+터미널(또는 PowerShell)에서 아래 명령어 실행:
 
 ```bash
 clawdbot config edit
 ```
 
-설정 파일이 열리면 아래 내용 추가:
+설정 파일이 텍스트 에디터에서 열립니다.
+
+#### 4-2. 텔레그램 설정 추가
+
+파일 맨 아래에 다음 내용을 추가하세요:
 
 ```yaml
 channels:
   telegram:
     enabled: true
-    token: "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"  # BotFather 토큰
+    token: "여기에_BotFather에서_받은_토큰_붙여넣기"
     allowlist:
-      - "123456789"  # 내 Chat ID
+      - "여기에_내_ChatID_숫자_붙여넣기"
 ```
 
-### 6-4. Clawdbot 재시작
+**실제 예시:**
+```yaml
+channels:
+  telegram:
+    enabled: true
+    token: "7123456789:AAHxxx_YOUR_BOT_TOKEN_HERE_xxxxx"
+    allowlist:
+      - "123456789"
+```
+
+⚠️ **주의사항:**
+- 토큰은 반드시 **큰따옴표(" ")** 로 감싸기
+- Chat ID도 **큰따옴표(" ")** 로 감싸기 (숫자지만 문자열로 입력)
+- `allowlist:` 아래 `-` 앞에 **스페이스 2칸** 들여쓰기
+
+#### 4-3. 파일 저장 후 닫기
+
+- Windows: `Ctrl + S` → 창 닫기
+- macOS: `Cmd + S` → 창 닫기
+
+---
+
+### 🔄 STEP 5: Clawdbot 재시작
+
+설정을 적용하려면 Clawdbot을 재시작해야 합니다.
 
 ```bash
 clawdbot gateway restart
 ```
 
-### 6-5. 테스트
+정상적으로 시작되면 이런 메시지가 나옵니다:
+```
+✓ Gateway restarted
+```
 
-1. 텔레그램에서 내가 만든 봇 검색
-2. `/start` 입력
-3. "안녕!" 메시지 보내기
-4. 응답이 오면 성공! 🎉
+**에러가 나면?**
+```bash
+# 로그 확인
+clawdbot gateway logs
+```
 
 ---
 
-## 7. 슬랙 연동
+### ✅ STEP 6: 연결 테스트
 
-### 7-1. Slack App 생성
+#### 6-1. 내 봇 찾기
 
-1. **Slack API 사이트 접속**
-   - https://api.slack.com/apps 접속
-   - Slack 계정으로 로그인
+1. 텔레그램 검색창에서 아까 만든 봇 이름 검색
+   - 예: `@my_clawdbot_12345_bot`
+2. 봇 채팅방 들어가기
 
-2. **Create New App 클릭**
-   - **"From scratch"** 선택
-   - App Name: `Clawdbot` (원하는 이름)
-   - Workspace: 연결할 워크스페이스 선택
-   - **"Create App"** 클릭
+#### 6-2. 대화 시작
 
-### 7-2. Bot Token 권한 설정
+1. **"시작"** 또는 **"/start"** 클릭/입력
+2. 아무 메시지나 보내보기:
+   ```
+   안녕! 넌 누구야?
+   ```
 
-1. **OAuth & Permissions 메뉴 이동**
-   - 좌측 메뉴에서 **"OAuth & Permissions"** 클릭
+#### 6-3. 응답 확인
 
-2. **Scopes 추가**
-   - 스크롤 내려서 **"Bot Token Scopes"** 찾기
-   - **"Add an OAuth Scope"** 클릭
-   - 아래 권한들 모두 추가:
-     ```
-     app_mentions:read
-     channels:history
-     channels:read
-     chat:write
-     groups:history
-     groups:read
-     im:history
-     im:read
-     im:write
-     users:read
-     ```
+몇 초 후 Clawdbot이 응답하면 **성공!** 🎉
 
-3. **앱 설치**
-   - 페이지 상단으로 스크롤
-   - **"Install to Workspace"** 클릭
-   - **"허용"** 클릭
+**응답이 없다면?**
+- 터미널에서 `clawdbot status` 실행해서 상태 확인
+- `clawdbot gateway logs` 로 에러 확인
+- 토큰과 Chat ID가 정확한지 다시 확인
 
-4. **Bot Token 복사**
-   - 설치 완료 후 **"Bot User OAuth Token"** 복사
-   - 형태: `xoxb-여러숫자-여러숫자-영문자조합`
+---
 
-### 7-3. App-Level Token 생성
+### 🎯 텔레그램 연동 체크리스트
 
-1. **Basic Information 메뉴 이동**
-   - 좌측 메뉴에서 **"Basic Information"** 클릭
+- [ ] BotFather에서 봇 생성 완료
+- [ ] 봇 토큰 저장함 (`7xxxxxxxxxx:AAHxxxxx...`)
+- [ ] userinfobot에서 내 Chat ID 확인함
+- [ ] `clawdbot config edit`으로 설정 추가함
+- [ ] `clawdbot gateway restart` 실행함
+- [ ] 봇과 대화 테스트 성공!
 
-2. **App-Level Tokens 생성**
-   - 스크롤 내려서 **"App-Level Tokens"** 찾기
-   - **"Generate Token and Scopes"** 클릭
-   - Token Name: `socket` (아무 이름)
-   - **"Add Scope"** 클릭 → `connections:write` 추가
-   - **"Generate"** 클릭
-   - 토큰 복사 (형태: `xapp-숫자-영문자조합`)
+---
+---
 
-### 7-4. Socket Mode 활성화
+## 7. 슬랙 연동 (상세 가이드)
 
-1. **Socket Mode 메뉴 이동**
-   - 좌측 메뉴에서 **"Socket Mode"** 클릭
+> ⏱️ 예상 소요시간: 10-15분
 
-2. **Socket Mode 켜기**
-   - **"Enable Socket Mode"** 토글 ON
+슬랙은 텔레그램보다 설정이 복잡하지만, 단계별로 따라하면 됩니다.
 
-### 7-5. Event Subscriptions 설정
+**필요한 것:**
+- Slack 워크스페이스 (무료/유료 모두 가능)
+- 워크스페이스 관리자 권한 또는 앱 설치 권한
 
-1. **Event Subscriptions 메뉴 이동**
-   - 좌측 메뉴에서 **"Event Subscriptions"** 클릭
+---
 
-2. **이벤트 활성화**
-   - **"Enable Events"** 토글 ON
+### 🌐 STEP 1: Slack API 사이트 접속
 
-3. **Bot Events 추가**
-   - **"Subscribe to bot events"** 펼치기
-   - **"Add Bot User Event"** 클릭
-   - 아래 이벤트들 추가:
-     ```
-     app_mention
-     message.channels
-     message.groups
-     message.im
-     ```
+1. 웹 브라우저에서 아래 주소 접속:
+   ```
+   https://api.slack.com/apps
+   ```
 
-4. **저장**
-   - 하단 **"Save Changes"** 클릭
+2. 우측 상단 **"Sign in"** 클릭
 
-### 7-6. Clawdbot에 슬랙 설정
+3. Slack 계정으로 로그인
+   - 워크스페이스 선택 화면이 나오면, Clawdbot을 연결할 워크스페이스 선택
+
+---
+
+### 📦 STEP 2: 새 Slack App 만들기
+
+#### 2-1. Create New App 클릭
+
+1. 로그인 후 보이는 화면에서 **"Create New App"** 버튼 클릭
+   - 버튼이 안 보이면: 우측 상단 **"Your Apps"** → **"Create New App"**
+
+#### 2-2. 생성 방식 선택
+
+팝업이 뜨면 **"From scratch"** 선택
+- ❌ "From an app manifest" 아님!
+
+#### 2-3. 앱 정보 입력
+
+1. **App Name**: `Clawdbot` (원하는 이름 입력)
+2. **Pick a workspace**: Clawdbot을 사용할 워크스페이스 선택
+3. **"Create App"** 버튼 클릭
+
+---
+
+### 🔑 STEP 3: Bot Token 권한 설정
+
+봇이 메시지를 읽고 보낼 수 있도록 권한을 부여합니다.
+
+#### 3-1. OAuth & Permissions 메뉴로 이동
+
+1. 좌측 사이드바에서 **"OAuth & Permissions"** 클릭
+   - Features 섹션 아래에 있음
+
+#### 3-2. Bot Token Scopes 찾기
+
+1. 페이지를 아래로 스크롤
+2. **"Scopes"** 섹션 찾기
+3. **"Bot Token Scopes"** 영역 확인
+   - ⚠️ "User Token Scopes" 아님! **Bot Token Scopes** 맞는지 확인!
+
+#### 3-3. 권한(Scopes) 추가하기
+
+**"Add an OAuth Scope"** 버튼을 클릭해서 아래 권한들을 **하나씩** 추가:
+
+| 권한 이름 | 설명 |
+|-----------|------|
+| `app_mentions:read` | @멘션 읽기 |
+| `channels:history` | 공개 채널 메시지 읽기 |
+| `channels:read` | 공개 채널 목록 보기 |
+| `chat:write` | 메시지 보내기 |
+| `groups:history` | 비공개 채널 메시지 읽기 |
+| `groups:read` | 비공개 채널 목록 보기 |
+| `im:history` | DM 메시지 읽기 |
+| `im:read` | DM 목록 보기 |
+| `im:write` | DM 보내기 |
+| `users:read` | 사용자 정보 읽기 |
+
+**추가 방법:**
+1. "Add an OAuth Scope" 클릭
+2. 검색창에 권한 이름 입력 (예: `app_mentions:read`)
+3. 목록에서 해당 권한 클릭
+4. 10개 모두 반복!
+
+#### 3-4. 워크스페이스에 앱 설치
+
+권한을 다 추가했으면:
+
+1. 페이지 맨 위로 스크롤
+2. **"OAuth Tokens for Your Workspace"** 섹션 찾기
+3. **"Install to Workspace"** 버튼 클릭
+4. 권한 요청 화면에서 **"허용"** 클릭
+
+#### 3-5. Bot User OAuth Token 복사 ⭐
+
+설치가 완료되면 **"Bot User OAuth Token"** 이 생성됩니다.
+
+```
+xoxb-여러숫자-여러숫자-영문자조합
+```
+
+**이 토큰을 복사해서 메모장에 저장하세요!**
+
+- 토큰은 `xoxb-`로 시작함
+- 페이지를 벗어나도 다시 볼 수 있지만, 지금 복사해두는 게 편함
+
+---
+
+### 🔐 STEP 4: App-Level Token 생성
+
+Socket Mode 연결에 필요한 토큰입니다.
+
+#### 4-1. Basic Information 메뉴로 이동
+
+1. 좌측 사이드바에서 **"Basic Information"** 클릭
+   - Settings 섹션 아래에 있음
+
+#### 4-2. App-Level Tokens 섹션 찾기
+
+1. 페이지를 아래로 스크롤
+2. **"App-Level Tokens"** 섹션 찾기
+
+#### 4-3. 새 토큰 생성
+
+1. **"Generate Token and Scopes"** 버튼 클릭
+2. 팝업이 뜨면:
+   - **Token Name**: `socket` (아무 이름이나 OK)
+   - **"Add Scope"** 클릭 → `connections:write` 선택
+3. **"Generate"** 버튼 클릭
+
+#### 4-4. App-Level Token 복사 ⭐
+
+생성된 토큰이 표시됩니다:
+
+```
+xapp-숫자-영문자조합-영문숫자조합...
+```
+
+**이 토큰을 복사해서 메모장에 저장하세요!**
+
+- 토큰은 `xapp-`으로 시작함
+- **"Done"** 클릭하면 팝업이 닫힘
+- 나중에 다시 보려면 토큰 옆 **"..."** 클릭 → **"Copy"**
+
+---
+
+### ⚡ STEP 5: Socket Mode 활성화
+
+Slack과 실시간 통신을 위해 Socket Mode를 켭니다.
+
+#### 5-1. Socket Mode 메뉴로 이동
+
+1. 좌측 사이드바에서 **"Socket Mode"** 클릭
+   - Settings 섹션 아래에 있음
+
+#### 5-2. Socket Mode 켜기
+
+1. **"Enable Socket Mode"** 토글을 **ON** 으로 변경
+2. 이미 App-Level Token이 있으면 자동 연결됨
+
+---
+
+### 📨 STEP 6: Event Subscriptions 설정
+
+Clawdbot이 메시지를 수신하려면 이벤트 구독이 필요합니다.
+
+#### 6-1. Event Subscriptions 메뉴로 이동
+
+1. 좌측 사이드바에서 **"Event Subscriptions"** 클릭
+   - Features 섹션 아래에 있음
+
+#### 6-2. 이벤트 구독 켜기
+
+1. **"Enable Events"** 토글을 **ON** 으로 변경
+
+#### 6-3. Bot Events 추가
+
+1. 페이지 아래로 스크롤
+2. **"Subscribe to bot events"** 섹션 찾기
+3. 접혀 있으면 클릭해서 펼치기
+4. **"Add Bot User Event"** 버튼 클릭
+
+아래 이벤트들을 **하나씩** 추가:
+
+| 이벤트 이름 | 설명 |
+|-------------|------|
+| `app_mention` | @멘션 받았을 때 |
+| `message.channels` | 공개 채널 메시지 |
+| `message.groups` | 비공개 채널 메시지 |
+| `message.im` | DM 메시지 |
+
+#### 6-4. 변경사항 저장
+
+1. 페이지 하단의 **"Save Changes"** 버튼 클릭
+2. 초록색 "Success" 메시지 확인
+
+---
+
+### 👤 STEP 7: 내 Slack User ID 확인
+
+Clawdbot이 나에게만 응답하도록 설정하려면 내 User ID가 필요합니다.
+
+#### 7-1. Slack 앱에서 내 프로필 열기
+
+**방법 A - 데스크톱 앱/웹:**
+1. 좌측 상단 워크스페이스 이름 클릭
+2. **"프로필"** 클릭 (또는 내 이름 클릭)
+
+**방법 B - 모바일 앱:**
+1. 하단 탭에서 **"나"** 선택
+
+#### 7-2. 멤버 ID 복사
+
+1. 프로필 화면에서 **더보기(⋯)** 클릭
+2. **"멤버 ID 복사"** 클릭
+
+ID 형태: `U01ABCD2EFG` (영문+숫자 11자리)
+
+**이 ID를 메모장에 저장하세요!**
+
+---
+
+### ⚙️ STEP 8: Clawdbot 설정 파일 수정
+
+이제 Clawdbot에 슬랙 정보를 입력합니다.
+
+#### 8-1. 설정 파일 열기
+
+터미널(또는 PowerShell)에서:
 
 ```bash
 clawdbot config edit
 ```
 
-설정 파일에 아래 내용 추가:
+#### 8-2. 슬랙 설정 추가
 
+파일에 다음 내용을 추가하세요:
+
+**텔레그램 설정이 이미 있는 경우:**
+```yaml
+channels:
+  telegram:
+    enabled: true
+    token: "텔레그램토큰"
+    allowlist:
+      - "텔레그램ChatID"
+  slack:
+    enabled: true
+    botToken: "여기에_Bot_User_OAuth_Token_붙여넣기"
+    appToken: "여기에_App_Level_Token_붙여넣기"
+    allowlist:
+      - "여기에_내_User_ID_붙여넣기"
+```
+
+**슬랙만 사용하는 경우:**
 ```yaml
 channels:
   slack:
     enabled: true
-    botToken: "여기에-Bot-User-OAuth-Token-붙여넣기"
-    appToken: "여기에-App-Level-Token-붙여넣기"
+    botToken: "여기에_Bot_User_OAuth_Token_붙여넣기"
+    appToken: "여기에_App_Level_Token_붙여넣기"
     allowlist:
-      - "U01234ABCDE"                     # 허용할 사용자 ID
+      - "여기에_내_User_ID_붙여넣기"
 ```
 
-### 7-7. 내 Slack User ID 확인
+**실제 예시:**
+```yaml
+channels:
+  slack:
+    enabled: true
+    botToken: "여기에-복사한-Bot-User-OAuth-Token"
+    appToken: "여기에-복사한-App-Level-Token"
+    allowlist:
+      - "U01ABCD2EFG"
+```
 
-1. Slack 앱에서 내 프로필 클릭
-2. 프로필 보기
-3. 더보기(⋯) → "멤버 ID 복사"
-4. 이 ID를 allowlist에 추가
+⚠️ **주의사항:**
+- 모든 값은 **큰따옴표(" ")** 로 감싸기
+- `channels:` 아래 들여쓰기 **스페이스 2칸**
+- `slack:` 아래 들여쓰기 **스페이스 4칸**
+- 토큰 앞뒤에 공백이 들어가지 않도록 주의!
 
-### 7-8. Clawdbot 재시작
+#### 8-3. 파일 저장 후 닫기
+
+- Windows: `Ctrl + S` → 창 닫기
+- macOS: `Cmd + S` → 창 닫기
+
+---
+
+### 🔄 STEP 9: Clawdbot 재시작
 
 ```bash
 clawdbot gateway restart
 ```
 
-### 7-9. 테스트
+성공 메시지:
+```
+✓ Gateway restarted
+```
 
-1. Slack 워크스페이스에서 Clawdbot 앱과 DM 시작
-2. "안녕!" 메시지 보내기
-3. 응답이 오면 성공! 🎉
+**에러 확인:**
+```bash
+clawdbot gateway logs
+```
+
+자주 나오는 에러:
+- `invalid_auth` → Bot Token이 잘못됨
+- `connection_error` → App Token이 잘못되거나 Socket Mode가 꺼져있음
+
+---
+
+### ✅ STEP 10: 연결 테스트
+
+#### 10-1. Slack에서 Clawdbot 앱 찾기
+
+1. Slack 앱 열기
+2. 좌측 사이드바 맨 아래 **"앱"** 섹션 찾기
+3. **"앱 추가"** 또는 **"+"** 클릭
+4. `Clawdbot` 검색
+5. 클릭해서 DM 채팅방 열기
+
+#### 10-2. 메시지 보내기
+
+DM 채팅방에서:
+```
+안녕! 넌 누구야?
+```
+
+#### 10-3. 응답 확인
+
+몇 초 후 Clawdbot이 응답하면 **성공!** 🎉
+
+**채널에서 사용하려면:**
+1. 원하는 채널로 이동
+2. 채널 설정 → **"통합"** → **"앱 추가"** → Clawdbot 추가
+3. `@Clawdbot 안녕!` 처럼 멘션해서 사용
+
+---
+
+### 🎯 슬랙 연동 체크리스트
+
+- [ ] Slack API 사이트에서 새 앱 생성
+- [ ] OAuth & Permissions에서 Bot Token Scopes 10개 추가
+- [ ] 워크스페이스에 앱 설치 완료
+- [ ] Bot User OAuth Token 저장함 (`xoxb-...`)
+- [ ] Basic Information에서 App-Level Token 생성
+- [ ] App-Level Token 저장함 (`xapp-...`)
+- [ ] Socket Mode 활성화함 (ON)
+- [ ] Event Subscriptions 활성화함 (ON)
+- [ ] Bot Events 4개 추가함
+- [ ] Save Changes 클릭함
+- [ ] 내 Slack User ID 확인함 (`U0...`)
+- [ ] `clawdbot config edit`으로 설정 추가함
+- [ ] `clawdbot gateway restart` 실행함
+- [ ] 봇과 DM 테스트 성공!
 
 ---
 
