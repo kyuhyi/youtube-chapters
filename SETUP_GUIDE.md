@@ -112,30 +112,107 @@ Clawdbot은 Node.js로 만들어졌기 때문에 먼저 Node.js를 설치해야 
 
 ---
 
-## 4. Anthropic API 키 발급
+## 4. Claude 인증 설정 (2가지 방법 중 택1)
 
-Clawdbot은 Claude AI를 사용하므로 Anthropic API 키가 필요합니다.
+Clawdbot은 Claude AI를 사용합니다. **두 가지 방법 중 하나**를 선택하세요:
 
-1. **Anthropic Console 접속**
-   - https://console.anthropic.com 접속
-   - 계정이 없으면 회원가입
+| 방법 | 대상 | 비용 | 추천 |
+|------|------|------|------|
+| **방법 A**: API 키 | 모든 사용자 | 사용한 만큼 (종량제) | 가끔 사용하는 분 |
+| **방법 B**: Claude Max 로그인 | Max/Pro 구독자 | 월 구독료에 포함 | 이미 구독 중인 분 ⭐ |
 
-2. **API Keys 메뉴 이동**
-   - 좌측 메뉴에서 **"API Keys"** 클릭
+---
 
-3. **새 키 생성**
-   - **"Create Key"** 버튼 클릭
-   - 이름 입력 (예: "clawdbot")
-   - **"Create Key"** 클릭
+### 방법 A: API 키 발급 (종량제)
 
-4. **키 복사 & 저장**
-   - 생성된 키 복사 (sk-ant-api03-... 형태)
-   - ⚠️ **이 키는 다시 볼 수 없으니 반드시 어딘가에 저장!**
+> 💰 사용한 만큼 결제 (Sonnet: 약 $3/백만토큰, Opus: 약 $15/백만토큰)
 
-5. **결제 수단 등록** (필수)
-   - 좌측 메뉴 **"Plans & Billing"** → **"Payment Methods"**
-   - 신용카드 등록
-   - ⚠️ 카드 등록 안 하면 API 호출 안 됨!
+#### A-1. Anthropic Console 접속
+
+1. 웹 브라우저에서 접속:
+   ```
+   https://console.anthropic.com
+   ```
+
+2. 계정이 없으면 **"Sign Up"** 클릭해서 회원가입
+   - 이메일 인증 필요
+
+#### A-2. API Keys 생성
+
+1. 로그인 후 좌측 메뉴에서 **"API Keys"** 클릭
+2. **"Create Key"** 버튼 클릭
+3. 키 이름 입력: `clawdbot` (아무 이름이나 OK)
+4. **"Create Key"** 클릭
+
+#### A-3. API 키 저장 ⭐ (매우 중요!)
+
+생성된 키가 화면에 표시됩니다:
+```
+sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...
+```
+
+**이 키를 복사해서 메모장에 저장하세요!**
+
+⚠️ **주의:** 이 키는 한 번만 보여주고 다시 볼 수 없습니다!
+
+#### A-4. 결제 수단 등록 (필수!)
+
+API 키가 있어도 결제 수단이 없으면 작동하지 않습니다.
+
+1. 좌측 메뉴 **"Plans & Billing"** 클릭
+2. **"Payment Methods"** 탭 클릭
+3. **"Add Payment Method"** 클릭
+4. 신용카드 정보 입력
+5. **"Save"** 클릭
+
+✅ 이제 API 키 준비 완료! → [5. Clawdbot 초기 설정 - 방법 A](#방법-a-api-키-사용자) 로 이동
+
+---
+
+### 방법 B: Claude Max/Pro 로그인 (구독자 전용) ⭐
+
+> 💡 Claude Pro ($20/월) 또는 Claude Max ($100/월) 구독자는 API 키 없이 로그인만으로 사용 가능!
+
+#### B-1. Claude Code 설치 확인
+
+Clawdbot 설치 시 Claude Code가 함께 설치됩니다. 확인:
+
+```bash
+claude --version
+```
+
+버전이 나오면 OK! 안 나오면:
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+#### B-2. Claude 로그인
+
+터미널에서 아래 명령어 실행:
+
+```bash
+claude login
+```
+
+#### B-3. 브라우저 인증
+
+1. 명령어 실행 후 브라우저가 자동으로 열립니다
+2. Claude 계정으로 로그인 (Pro/Max 구독 중인 계정)
+3. **"허용"** 또는 **"Authorize"** 클릭
+4. "인증 완료" 메시지가 나오면 브라우저 닫기
+
+#### B-4. 로그인 확인
+
+터미널에서 아래 명령어로 확인:
+
+```bash
+claude config list
+```
+
+`oauth` 또는 계정 정보가 보이면 성공!
+
+✅ 이제 로그인 완료! → [5. Clawdbot 초기 설정 - 방법 B](#방법-b-claude-maxpro-구독자) 로 이동
 
 ---
 
@@ -153,16 +230,20 @@ mkdir ~/clawd
 cd ~/clawd
 ```
 
-### Clawdbot 초기화
+---
+
+### 방법 A: API 키 사용자
+
+#### Clawdbot 초기화
 
 ```bash
 clawdbot init
 ```
 
-이 명령어를 실행하면 설정 마법사가 시작됩니다:
+설정 마법사가 시작됩니다:
 
 1. **Anthropic API Key 입력**
-   - 아까 복사한 API 키 붙여넣기
+   - 아까 저장한 API 키 붙여넣기 (`sk-ant-api03-...`)
 
 2. **기본 모델 선택**
    - `claude-sonnet-4-20250514` 권장 (성능/비용 균형)
@@ -171,12 +252,53 @@ clawdbot init
 3. **작업 디렉토리 설정**
    - 기본값 사용 (엔터)
 
-### 설정 파일 확인
+---
+
+### 방법 B: Claude Max/Pro 구독자
+
+#### Clawdbot 초기화 (OAuth 모드)
 
 ```bash
-# 설정 파일 위치
-# Windows: C:\Users\사용자명\.clawdbot\config.yaml
-# macOS: ~/.clawdbot/config.yaml
+clawdbot init
+```
+
+설정 마법사에서:
+
+1. **API Key 입력 부분에서**
+   - 빈칸으로 두고 엔터 (또는 `skip` 입력)
+   
+2. **또는 직접 설정 파일 수정:**
+
+```bash
+clawdbot config edit
+```
+
+설정 파일에서 아래와 같이 수정:
+
+```yaml
+# API 키 대신 OAuth 사용
+anthropic:
+  # apiKey: "sk-ant-..."  ← 이 줄 삭제 또는 주석처리
+  oauth: true              # ← 이 줄 추가!
+
+# 모델 설정
+model: claude-sonnet-4-20250514
+```
+
+⚠️ **Max 구독자 참고:** 
+- Max 플랜은 Opus 모델 포함! `claude-opus-4-20250514` 사용 가능
+- Pro 플랜은 Sonnet까지만 가능
+
+---
+
+### 설정 파일 위치
+
+```bash
+# Windows
+C:\Users\사용자명\.clawdbot\config.yaml
+
+# macOS
+~/.clawdbot/config.yaml
 ```
 
 ---
