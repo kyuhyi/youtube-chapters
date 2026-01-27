@@ -674,7 +674,7 @@ clawdbot gateway logs
 
 ---
 
-### ✅ STEP 6: 연결 테스트
+### ✅ STEP 6: 연결 테스트 및 페어링 승인
 
 #### 6-1. 내 봇 찾기
 
@@ -682,21 +682,78 @@ clawdbot gateway logs
    - 예: `@my_clawdbot_12345_bot`
 2. 봇 채팅방 들어가기
 
-#### 6-2. 대화 시작
+#### 6-2. 첫 메시지 보내기
 
 1. **"시작"** 또는 **"/start"** 클릭/입력
 2. 아무 메시지나 보내보기:
    ```
-   안녕! 넌 누구야?
+   안녕!
    ```
 
-#### 6-3. 응답 확인
+#### 6-3. 페어링 승인 (첫 연결 시 필요!) ⭐
 
-몇 초 후 Clawdbot이 응답하면 **성공!** 🎉
+**처음 메시지를 보내면 봇이 이렇게 응답합니다:**
 
-**응답이 없다면?**
-- 터미널에서 `clawdbot status` 실행해서 상태 확인
-- `clawdbot gateway logs` 로 에러 확인
+```
+Clawdbot: access not configured.
+Your Telegram user id: 8568653122
+Pairing code: ABC12XYZ
+
+Ask the bot owner to approve with:
+clawdbot pairing approve telegram <code>
+```
+
+이것은 **보안을 위한 페어링 과정**입니다!
+
+#### 6-4. 터미널에서 페어링 승인
+
+**PC 터미널(또는 PowerShell)에서 아래 명령어 실행:**
+
+```bash
+clawdbot pairing approve telegram ABC12XYZ
+```
+
+⚠️ `ABC12XYZ` 부분을 **봇이 보내준 실제 코드**로 바꿔서 입력하세요!
+
+**승인 완료 메시지:**
+```
+✓ Pairing approved for telegram user 8568653122
+```
+
+#### 6-5. 다시 메시지 보내기
+
+페어링 승인 후 텔레그램에서 다시 메시지를 보내보세요:
+
+```
+안녕! 넌 누구야?
+```
+
+#### 6-6. 응답 확인
+
+이제 Clawdbot이 정상적으로 응답하면 **성공!** 🎉
+
+---
+
+### 🔧 문제 해결
+
+**❌ "access not configured" 계속 나오는 경우**
+1. 페어링 코드를 정확히 입력했는지 확인
+2. `clawdbot pairing list` 로 승인된 목록 확인
+3. 코드가 만료됐으면 텔레그램에서 다시 메시지 보내서 새 코드 받기
+
+**❌ 페어링 승인 명령어가 안 되는 경우**
+```bash
+# Clawdbot 상태 확인
+clawdbot status
+
+# 게이트웨이가 꺼져있으면 시작
+clawdbot gateway start
+```
+
+**❌ 응답이 아예 없는 경우**
+1. `clawdbot gateway logs` 로 에러 확인
+2. 토큰이 정확한지 config 파일 다시 확인
+3. `clawdbot gateway restart` 실행
 - 토큰과 Chat ID가 정확한지 다시 확인
 
 ---
@@ -1035,16 +1092,54 @@ clawdbot gateway logs
 4. `Clawdbot` 검색
 5. 클릭해서 DM 채팅방 열기
 
-#### 10-2. 메시지 보내기
+#### 10-2. 첫 메시지 보내기
 
 DM 채팅방에서:
+```
+안녕!
+```
+
+#### 10-3. 페어링 승인 (첫 연결 시 필요!) ⭐
+
+**처음 메시지를 보내면 봇이 이렇게 응답합니다:**
+
+```
+Clawdbot: access not configured.
+Your Slack user id: U01ABCD2EFG
+Pairing code: XYZ98ABC
+
+Ask the bot owner to approve with:
+clawdbot pairing approve slack <code>
+```
+
+이것은 **보안을 위한 페어링 과정**입니다!
+
+#### 10-4. 터미널에서 페어링 승인
+
+**PC 터미널(또는 PowerShell)에서 아래 명령어 실행:**
+
+```bash
+clawdbot pairing approve slack XYZ98ABC
+```
+
+⚠️ `XYZ98ABC` 부분을 **봇이 보내준 실제 코드**로 바꿔서 입력하세요!
+
+**승인 완료 메시지:**
+```
+✓ Pairing approved for slack user U01ABCD2EFG
+```
+
+#### 10-5. 다시 메시지 보내기
+
+페어링 승인 후 슬랙에서 다시 메시지를 보내보세요:
+
 ```
 안녕! 넌 누구야?
 ```
 
-#### 10-3. 응답 확인
+#### 10-6. 응답 확인
 
-몇 초 후 Clawdbot이 응답하면 **성공!** 🎉
+이제 Clawdbot이 정상적으로 응답하면 **성공!** 🎉
 
 **채널에서 사용하려면:**
 1. 원하는 채널로 이동
