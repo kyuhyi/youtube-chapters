@@ -453,14 +453,16 @@
                 return parseManualTranscript(manualTranscript);
             }
 
-            // Method 0: Try local Python backend (best method - no CORS issues)
+            // Method 0: Try localhost:8081 first (local Python server - bypasses cloud IP blocks)
             try {
-                console.log('Trying local backend...');
-                const response = await fetch(`/api/transcript?videoId=${videoId}`);
+                console.log('Trying localhost:8081...');
+                const response = await fetch(`http://localhost:8081/api/transcript?videoId=${videoId}`, {
+                    signal: AbortSignal.timeout(5000)
+                });
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0 && !data.error) {
-                        console.log('Local backend succeeded!');
+                        console.log('✅ Local server succeeded!');
                         return data.map(item => ({
                             start: item.start,
                             text: item.text
@@ -468,7 +470,25 @@
                     }
                 }
             } catch (e) {
-                console.log('Local backend not available:', e);
+                console.log('Local server not running (start-server.bat 실행 필요):', e.message);
+            }
+
+            // Method 0.5: Try Vercel deployed API
+            try {
+                console.log('Trying Vercel API...');
+                const response = await fetch(`/api/transcript?videoId=${videoId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0 && !data.error) {
+                        console.log('Vercel API succeeded!');
+                        return data.map(item => ({
+                            start: item.start,
+                            text: item.text
+                        }));
+                    }
+                }
+            } catch (e) {
+                console.log('Vercel API not available:', e);
             }
 
             const corsProxies = [
