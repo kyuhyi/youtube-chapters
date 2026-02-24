@@ -19,40 +19,41 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             from youtube_transcript_api import YouTubeTranscriptApi
-            from youtube_transcript_api.formatters import JSONFormatter
             
             transcript = None
             error_msg = None
             
-            # Try different language codes
-            lang_codes = ['ko', 'en', 'en-US', 'ja', 'zh-Hans', 'es', 'de', 'fr']
-            
-            for lang in lang_codes:
-                try:
-                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                    transcript = transcript_list.find_transcript([lang]).fetch()
-                    break
-                except Exception as e:
-                    error_msg = str(e)
-                    continue
-            
-            # If no specific language found, try to get any available transcript
-            if not transcript:
-                try:
-                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                    # Get first available transcript
+            # Try to get transcript with various methods
+            try:
+                # Method 1: Try listing and finding transcripts
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                
+                # Try Korean first, then English, then any
+                for lang in ['ko', 'en']:
+                    try:
+                        transcript = transcript_list.find_transcript([lang]).fetch()
+                        break
+                    except:
+                        continue
+                
+                # If no specific language, get any available
+                if not transcript:
                     for t in transcript_list:
                         transcript = t.fetch()
                         break
-                except Exception as e:
-                    error_msg = str(e)
+                        
+            except Exception as e:
+                error_msg = str(e)
             
-            # Last resort: try direct fetch
+            # Method 2: Direct fetch as fallback
             if not transcript:
                 try:
-                    transcript = YouTubeTranscriptApi.get_transcript(video_id)
-                except Exception as e:
-                    error_msg = str(e)
+                    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en', 'ja'])
+                except:
+                    try:
+                        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+                    except Exception as e:
+                        error_msg = str(e)
             
             if not transcript:
                 self.wfile.write(json.dumps({'error': error_msg or 'No transcript available'}).encode())
