@@ -19,26 +19,51 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             from youtube_transcript_api import YouTubeTranscriptApi
-            api = YouTubeTranscriptApi()
+            from youtube_transcript_api.formatters import JSONFormatter
             
             transcript = None
-            for lang in ['ko', 'en', 'en-US', 'ja', 'es']:
+            error_msg = None
+            
+            # Try different language codes
+            lang_codes = ['ko', 'en', 'en-US', 'ja', 'zh-Hans', 'es', 'de', 'fr']
+            
+            for lang in lang_codes:
                 try:
-                    transcript = api.fetch(video_id, languages=[lang])
+                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                    transcript = transcript_list.find_transcript([lang]).fetch()
                     break
-                except:
+                except Exception as e:
+                    error_msg = str(e)
                     continue
             
+            # If no specific language found, try to get any available transcript
             if not transcript:
                 try:
-                    transcript = api.fetch(video_id)
+                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                    # Get first available transcript
+                    for t in transcript_list:
+                        transcript = t.fetch()
+                        break
                 except Exception as e:
-                    self.wfile.write(json.dumps({'error': str(e)}).encode())
-                    return
+                    error_msg = str(e)
             
-            result = [{'start': entry.start, 'text': entry.text} for entry in transcript]
+            # Last resort: try direct fetch
+            if not transcript:
+                try:
+                    transcript = YouTubeTranscriptApi.get_transcript(video_id)
+                except Exception as e:
+                    error_msg = str(e)
+            
+            if not transcript:
+                self.wfile.write(json.dumps({'error': error_msg or 'No transcript available'}).encode())
+                return
+            
+            # Format result
+            result = [{'start': entry['start'], 'text': entry['text']} for entry in transcript]
             self.wfile.write(json.dumps(result).encode())
             
+        except ImportError as e:
+            self.wfile.write(json.dumps({'error': f'Import error: {str(e)}'}).encode())
         except Exception as e:
             self.wfile.write(json.dumps({'error': str(e)}).encode())
 
