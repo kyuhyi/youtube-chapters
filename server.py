@@ -4,8 +4,16 @@
 import http.server
 import json
 import os
+import sys
 import urllib.parse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+
+# Fix encoding for Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except:
+        pass
 
 class ChapterHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -23,46 +31,32 @@ class ChapterHandler(SimpleHTTPRequestHandler):
             try:
                 from youtube_transcript_api import YouTubeTranscriptApi
                 
-                # Try different methods
+                api = YouTubeTranscriptApi()
                 transcript = None
                 error_msg = None
                 
-                # Method 1: List transcripts and find by language
-                try:
-                    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                    
-                    # Try Korean first
-                    for lang in ['ko', 'en', 'ja']:
-                        try:
-                            transcript = transcript_list.find_transcript([lang]).fetch()
-                            break
-                        except:
-                            continue
-                    
-                    # Get any available
-                    if not transcript:
-                        for t in transcript_list:
-                            transcript = t.fetch()
-                            break
-                except Exception as e:
-                    error_msg = str(e)
+                # Try with different languages
+                for langs in [['ko'], ['en'], ['ja'], ['ko', 'en', 'ja']]:
+                    try:
+                        transcript = api.fetch(video_id, languages=langs)
+                        break
+                    except Exception as e:
+                        error_msg = str(e)
+                        continue
                 
-                # Method 2: Direct fetch
+                # Try without language preference
                 if not transcript:
                     try:
-                        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['ko', 'en', 'ja'])
-                    except:
-                        try:
-                            transcript = YouTubeTranscriptApi.get_transcript(video_id)
-                        except Exception as e:
-                            error_msg = str(e)
+                        transcript = api.fetch(video_id)
+                    except Exception as e:
+                        error_msg = str(e)
                 
                 if not transcript:
                     self.send_json(400, {'error': error_msg or 'No transcript available'})
                     return
                 
-                # Format transcript
-                result = [{'start': entry['start'], 'text': entry['text']} for entry in transcript]
+                # Format transcript - entries have .text and .start attributes
+                result = [{'start': entry.start, 'text': entry.text} for entry in transcript]
                 self.send_json(200, result)
                 
             except ImportError:
@@ -91,6 +85,10 @@ class ChapterHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         super().end_headers()
+    
+    def log_message(self, format, *args):
+        # Simple logging
+        print(f"[{self.log_date_time_string()}] {args[0]}")
 
 if __name__ == '__main__':
     port = 8081
@@ -98,14 +96,14 @@ if __name__ == '__main__':
     
     print()
     print('=' * 50)
-    print('🚀 YouTube 챕터 생성기 로컬 서버')
+    print('YouTube Chapter Generator - Local Server')
     print('=' * 50)
-    print(f'✅ http://localhost:{port} 에서 실행 중')
+    print(f'Server running at http://localhost:{port}')
     print()
-    print('📋 사용법:')
-    print(f'   브라우저에서 http://localhost:{port} 열기')
+    print('Usage:')
+    print(f'  Open http://localhost:{port} in your browser')
     print()
-    print('⏹️  종료: Ctrl+C')
+    print('Press Ctrl+C to stop')
     print('=' * 50)
     print()
     
